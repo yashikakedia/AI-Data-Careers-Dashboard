@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI & Data Careers Intelligence Platform</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #080b10;
+    --bg1: #0d1117;
+    --bg2: #111820;
+    --bg3: #161e2a;
+    --border: rgba(99,179,255,0.1);
+    --border2: rgba(99,179,255,0.2);
+    --accent: #3b9eff;
+    --accent2: #00e5c3;
+    --accent3: #a78bfa;
+    --accent4: #f97316;
+    --text: #e2eaf5;
+    --text2: #7a99bb;
+    --text3: #3d5a7a;
+    --mono: 'Space Mono', monospace;
+    --sans: 'Outfit', sans-serif;
+    --green: #22d3a0;
+    --red: #f04a6e;
+    --yellow: #fbbf24;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    font-size: 14px;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Grid background */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(59,158,255,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(59,158,255,0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .page { position: relative; z-index: 1; padding: 24px; max-width: 1400px; margin: 0 auto; }
+
+  /* Header */
+  .header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 28px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--border);
+  }
+  .header-left { display: flex; align-items: center; gap: 16px; }
+  .logo-dot {
+    width: 36px; height: 36px;
+    background: var(--accent);
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    position: relative;
+  }
+  .logo-dot::after {
+    content: '';
+    width: 14px; height: 14px;
+    background: var(--bg);
+    border-radius: 50%;
+  }
+  .header-title { font-size: 18px; font-weight: 600; letter-spacing: -0.3px; }
+  .header-sub { font-size: 12px; color: var(--text2); font-family: var(--mono); margin-top: 2px; }
+  .header-right { display: flex; align-items: center; gap: 12px; }
+  .status-pill {
+    display: flex; align-items: center; gap: 6px;
+    font-family: var(--mono); font-size: 11px; color: var(--accent2);
+    background: rgba(0,229,195,0.07);
+    border: 1px solid rgba(0,229,195,0.2);
+    padding: 5px 12px; border-radius: 20px;
+  }
+  .status-dot {
+    width: 6px; height: 6px; border-radius: 50%; background: var(--accent2);
+    animation: pulse 2s infinite;
+  }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+  .last-updated { font-size: 11px; color: var(--text3); font-family: var(--mono); }
+
+  /* KPI row */
+  .kpi-row {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+  .kpi {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px 18px;
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.2s;
+  }
+  .kpi:hover { border-color: var(--border2); }
+  .kpi::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+  }
+  .kpi.k1::before { background: var(--accent); }
+  .kpi.k2::before { background: var(--accent2); }
+  .kpi.k3::before { background: var(--accent3); }
+  .kpi.k4::before { background: var(--accent4); }
+  .kpi.k5::before { background: var(--yellow); }
+  .kpi-label { font-size: 11px; color: var(--text2); text-transform: uppercase; letter-spacing: 0.08em; font-family: var(--mono); margin-bottom: 8px; }
+  .kpi-value { font-size: 26px; font-weight: 600; line-height: 1; letter-spacing: -1px; }
+  .kpi.k1 .kpi-value { color: var(--accent); }
+  .kpi.k2 .kpi-value { color: var(--accent2); }
+  .kpi.k3 .kpi-value { color: var(--accent3); }
+  .kpi.k4 .kpi-value { color: var(--accent4); }
+  .kpi.k5 .kpi-value { color: var(--yellow); }
+  .kpi-sub { font-size: 11px; color: var(--text3); margin-top: 5px; font-family: var(--mono); }
+  .kpi-change {
+    display: inline-flex; align-items: center; gap: 3px;
+    font-size: 11px; font-family: var(--mono);
+    margin-top: 4px;
+  }
+  .up { color: var(--green); }
+  .down { color: var(--red); }
+
+  /* Main grid */
+  .main-grid { display: grid; grid-template-columns: 1.4fr 1fr; gap: 16px; margin-bottom: 16px; }
+  .bottom-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+
+  /* Card */
+  .card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+  }
+  .card-header {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 16px;
+  }
+  .card-title {
+    font-size: 13px; font-weight: 500; color: var(--text);
+    text-transform: uppercase; letter-spacing: 0.06em;
+    font-family: var(--mono);
+  }
+  .card-badge {
+    font-size: 10px; font-family: var(--mono);
+    background: rgba(59,158,255,0.1);
+    color: var(--accent);
+    border: 1px solid rgba(59,158,255,0.2);
+    padding: 2px 8px; border-radius: 4px;
+  }
+
+  /* Bar rows */
+  .bar-item { display: flex; align-items: center; gap: 10px; margin-bottom: 11px; }
+  .bar-name { font-size: 12px; color: var(--text2); width: 88px; flex-shrink: 0; text-align: right; font-family: var(--mono); }
+  .bar-track { flex: 1; height: 8px; background: var(--bg3); border-radius: 4px; overflow: hidden; }
+  .bar-fill { height: 100%; border-radius: 4px; position: relative; }
+  .bar-num { font-size: 11px; color: var(--text3); width: 36px; flex-shrink: 0; font-family: var(--mono); }
+
+  /* Work mode */
+  .wm-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 14px; }
+  .wm { border-radius: 10px; padding: 14px 10px; text-align: center; border: 1px solid; }
+  .wm-hybrid { border-color: rgba(59,158,255,0.3); background: rgba(59,158,255,0.05); }
+  .wm-onsite { border-color: rgba(251,191,36,0.3); background: rgba(251,191,36,0.05); }
+  .wm-remote { border-color: rgba(0,229,195,0.3); background: rgba(0,229,195,0.05); }
+  .wm-val { font-size: 20px; font-weight: 600; font-family: var(--mono); }
+  .wm-hybrid .wm-val { color: var(--accent); }
+  .wm-onsite .wm-val { color: var(--yellow); }
+  .wm-remote .wm-val { color: var(--accent2); }
+  .wm-label { font-size: 10px; color: var(--text2); text-transform: uppercase; letter-spacing: 0.1em; margin-top: 3px; }
+  .wm-pct { font-size: 11px; margin-top: 2px; font-family: var(--mono); }
+  .wm-hybrid .wm-pct { color: rgba(59,158,255,0.7); }
+  .wm-onsite .wm-pct { color: rgba(251,191,36,0.7); }
+  .wm-remote .wm-pct { color: rgba(0,229,195,0.7); }
+
+  /* Stacked bar */
+  .stack-bar { display: flex; height: 6px; border-radius: 3px; overflow: hidden; gap: 2px; }
+  .stack-seg { height: 100%; border-radius: 3px; }
+
+  /* Exp levels */
+  .exp-item { margin-bottom: 14px; }
+  .exp-header { display: flex; justify-content: space-between; margin-bottom: 5px; }
+  .exp-name { font-size: 12px; color: var(--text); font-weight: 500; }
+  .exp-num { font-size: 12px; color: var(--text2); font-family: var(--mono); }
+  .exp-bar-track { height: 12px; background: var(--bg3); border-radius: 6px; overflow: hidden; position: relative; }
+  .exp-bar-fill { height: 100%; border-radius: 6px; }
+  .exp-bar-pct { position: absolute; right: 8px; top: 0; line-height: 12px; font-size: 9px; font-family: var(--mono); color: rgba(255,255,255,0.5); }
+
+  /* Footer row */
+  .footer-row { display: flex; align-items: center; justify-content: space-between; margin-top: 20px; padding-top: 16px; border-top: 1px solid var(--border); }
+  .footer-tag { font-size: 11px; color: var(--text3); font-family: var(--mono); }
+  .tech-stack { display: flex; gap: 8px; }
+  .tech-pill {
+    font-size: 10px; font-family: var(--mono);
+    background: var(--bg3);
+    color: var(--text2);
+    border: 1px solid var(--border);
+    padding: 3px 10px; border-radius: 4px;
+  }
+
+  /* Scanline animation */
+  @keyframes scanline {
+    0% { transform: translateY(-100%); }
+    100% { transform: translateY(100vh); }
+  }
+  .scanline {
+    position: fixed; top: 0; left: 0; right: 0; height: 2px;
+    background: linear-gradient(transparent, rgba(59,158,255,0.08), transparent);
+    animation: scanline 8s linear infinite;
+    pointer-events: none; z-index: 999;
+  }
+
+  /* Fade-in on load */
+  @keyframes fadeUp { from { opacity:0; transform: translateY(12px); } to { opacity:1; transform: none; } }
+  .kpi { animation: fadeUp 0.5s ease both; }
+  .kpi:nth-child(1) { animation-delay: 0.05s; }
+  .kpi:nth-child(2) { animation-delay: 0.1s; }
+  .kpi:nth-child(3) { animation-delay: 0.15s; }
+  .kpi:nth-child(4) { animation-delay: 0.2s; }
+  .kpi:nth-child(5) { animation-delay: 0.25s; }
+  .card { animation: fadeUp 0.5s ease both; animation-delay: 0.3s; }
+</style>
+</head>
+<body>
+
+<div class="scanline"></div>
+
+<div class="page">
+
+  <!-- Header -->
+  <div class="header">
+    <div class="header-left">
+      <div class="logo-dot"></div>
+      <div>
+        <div class="header-title">AI &amp; Data Careers Intelligence Platform</div>
+        <div class="header-sub">// market_overview_dashboard.v2</div>
+      </div>
+    </div>
+    <div class="header-right">
+      <span class="status-pill"><span class="status-dot"></span>LIVE DATA</span>
+      <span class="last-updated">UPDATED: 2026-Q1 &nbsp;|&nbsp; N=50,000</span>
+    </div>
+  </div>
+
+  <!-- KPI Row -->
+  <div class="kpi-row">
+    <div class="kpi k1">
+      <div class="kpi-label">Total Listings</div>
+      <div class="kpi-value">50K</div>
+      <div class="kpi-sub">job postings</div>
+      <div class="kpi-change up">▲ +2.1% YoY</div>
+    </div>
+    <div class="kpi k2">
+      <div class="kpi-label">Avg Salary (USD)</div>
+      <div class="kpi-value">$110.8K</div>
+      <div class="kpi-sub">annual base pay</div>
+      <div class="kpi-change up">▲ +4.3% YoY</div>
+    </div>
+    <div class="kpi k3">
+      <div class="kpi-label">Remote Jobs</div>
+      <div class="kpi-value">32.96%</div>
+      <div class="kpi-sub">16,478 listings</div>
+      <div class="kpi-change down">▼ -1.2% YoY</div>
+    </div>
+    <div class="kpi k4">
+      <div class="kpi-label">Top Country</div>
+      <div class="kpi-value">UK</div>
+      <div class="kpi-sub">8,452 jobs</div>
+      <div class="kpi-change up">▲ #1 globally</div>
+    </div>
+    <div class="kpi k5">
+      <div class="kpi-label">Top Role</div>
+      <div class="kpi-value" style="font-size:18px; padding-top:4px;">MLOps Eng.</div>
+      <div class="kpi-sub">8,439 listings</div>
+      <div class="kpi-change up">▲ fastest growing</div>
+    </div>
+  </div>
+
+  <!-- Main Grid -->
+  <div class="main-grid">
+
+    <!-- Trend Chart -->
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title">Jobs Trend by Year</span>
+        <span class="card-badge">2020 – 2026</span>
+      </div>
+      <div style="position:relative; height:220px;">
+        <canvas id="trendChart" role="img" aria-label="Line chart showing AI and data job postings from 2020 to 2026, ranging from 7,035 to 7,312 per year.">Job counts per year: 2020: 7205, 2021: 7128, 2022: 7135, 2023: 7035, 2024: 7312, 2025: 7043, 2026: 7142.</canvas>
+      </div>
+    </div>
+
+    <!-- Jobs by Country -->
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title">Jobs by Country</span>
+        <span class="card-badge">TOP 6</span>
+      </div>
+      <div id="country-bars"></div>
+    </div>
+  </div>
+
+  <!-- Bottom Grid -->
+  <div class="bottom-grid">
+
+    <!-- Jobs by Role -->
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title">Jobs by Role</span>
+        <span class="card-badge">TOP 6</span>
+      </div>
+      <div id="role-bars"></div>
+    </div>
+
+    <!-- Work Mode -->
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title">Work Mode Distribution</span>
+      </div>
+      <div class="wm-grid">
+        <div class="wm wm-hybrid">
+          <div class="wm-val">16,984</div>
+          <div class="wm-label">Hybrid</div>
+          <div class="wm-pct">34.0%</div>
+        </div>
+        <div class="wm wm-onsite">
+          <div class="wm-val">16,538</div>
+          <div class="wm-label">Onsite</div>
+          <div class="wm-pct">33.1%</div>
+        </div>
+        <div class="wm wm-remote">
+          <div class="wm-val">16,478</div>
+          <div class="wm-label">Remote</div>
+          <div class="wm-pct">33.0%</div>
+        </div>
+      </div>
+      <div class="stack-bar" style="margin-top:8px;">
+        <div class="stack-seg" style="flex:16984; background:var(--accent);"></div>
+        <div class="stack-seg" style="flex:16538; background:var(--yellow);"></div>
+        <div class="stack-seg" style="flex:16478; background:var(--accent2);"></div>
+      </div>
+      <div style="margin-top:16px; position:relative; height:130px;">
+        <canvas id="wmChart" role="img" aria-label="Donut chart: Hybrid 34%, Onsite 33.1%, Remote 33%"></canvas>
+      </div>
+    </div>
+
+    <!-- Experience Level -->
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title">By Experience Level</span>
+      </div>
+      <div class="exp-item">
+        <div class="exp-header">
+          <span class="exp-name">Entry Level</span>
+          <span class="exp-num">16,628</span>
+        </div>
+        <div class="exp-bar-track">
+          <div class="exp-bar-fill" style="width:99.6%; background: linear-gradient(90deg, #3b9eff, #7fc4ff);"></div>
+          <span class="exp-bar-pct">33.3%</span>
+        </div>
+      </div>
+      <div class="exp-item">
+        <div class="exp-header">
+          <span class="exp-name">Mid Level</span>
+          <span class="exp-num">16,695</span>
+        </div>
+        <div class="exp-bar-track">
+          <div class="exp-bar-fill" style="width:100%; background: linear-gradient(90deg, #a78bfa, #c4b5fd);"></div>
+          <span class="exp-bar-pct">33.4%</span>
+        </div>
+      </div>
+      <div class="exp-item">
+        <div class="exp-header">
+          <span class="exp-name">Senior Level</span>
+          <span class="exp-num">16,677</span>
+        </div>
+        <div class="exp-bar-track">
+          <div class="exp-bar-fill" style="width:99.9%; background: linear-gradient(90deg, #00e5c3, #5ef7df);"></div>
+          <span class="exp-bar-pct">33.4%</span>
+        </div>
+      </div>
+      <div style="position:relative; height:100px; margin-top:10px;">
+        <canvas id="expChart" role="img" aria-label="Bar chart: Entry 16628, Mid 16695, Senior 16677"></canvas>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Footer -->
+  <div class="footer-row">
+    <span class="footer-tag">// Built with Python · Tableau · AI-powered insights &nbsp;|&nbsp; github.com/yourusername/ai-careers-dashboard</span>
+    <div class="tech-stack">
+      <span class="tech-pill">Python</span>
+      <span class="tech-pill">Pandas</span>
+      <span class="tech-pill">Chart.js</span>
+      <span class="tech-pill">D3.js</span>
+      <span class="tech-pill">Tableau</span>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const countryData = [
+  { name: "UK", val: 8452, color: "#3b9eff" },
+  { name: "India", val: 8100, color: "#a78bfa" },
+  { name: "Germany", val: 7800, color: "#00e5c3" },
+  { name: "Canada", val: 7600, color: "#f97316" },
+  { name: "Australia", val: 7400, color: "#fbbf24" },
+  { name: "USA", val: 7200, color: "#f04a6e" },
+];
+const maxC = 8452;
+const cb = document.getElementById("country-bars");
+countryData.forEach(c => {
+  cb.innerHTML += `<div class="bar-item">
+    <div class="bar-name">${c.name}</div>
+    <div class="bar-track"><div class="bar-fill" style="width:${Math.round(c.val/maxC*100)}%;background:${c.color};"></div></div>
+    <div class="bar-num">${(c.val/1000).toFixed(1)}k</div>
+  </div>`;
+});
+
+const roleData = [
+  { name: "MLOps Eng.", val: 8439, color: "#3b9eff" },
+  { name: "AI Researcher", val: 8200, color: "#a78bfa" },
+  { name: "Data Scientist", val: 7900, color: "#00e5c3" },
+  { name: "Applied Sci.", val: 7600, color: "#f97316" },
+  { name: "Data Analyst", val: 7400, color: "#fbbf24" },
+  { name: "ML Engineer", val: 7200, color: "#f04a6e" },
+];
+const maxR = 8439;
+const rb = document.getElementById("role-bars");
+roleData.forEach(r => {
+  rb.innerHTML += `<div class="bar-item">
+    <div class="bar-name">${r.name}</div>
+    <div class="bar-track"><div class="bar-fill" style="width:${Math.round(r.val/maxR*100)}%;background:${r.color};"></div></div>
+    <div class="bar-num">${(r.val/1000).toFixed(1)}k</div>
+  </div>`;
+});
+
+new Chart(document.getElementById("trendChart"), {
+  type: "line",
+  data: {
+    labels: ["2020","2021","2022","2023","2024","2025","2026"],
+    datasets: [{
+      label: "Job Listings",
+      data: [7205,7128,7135,7035,7312,7043,7142],
+      borderColor: "#3b9eff",
+      backgroundColor: "rgba(59,158,255,0.07)",
+      borderWidth: 2,
+      pointBackgroundColor: "#3b9eff",
+      pointBorderColor: "#080b10",
+      pointBorderWidth: 2,
+      pointRadius: 5,
+      tension: 0.3,
+      fill: true,
+    }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        backgroundColor: "#0d1117",
+        borderColor: "rgba(59,158,255,0.3)",
+        borderWidth: 1,
+        titleColor: "#7a99bb",
+        bodyColor: "#e2eaf5",
+        titleFont: { family: "'Space Mono', monospace", size: 11 },
+        bodyFont: { family: "'Space Mono', monospace", size: 12 },
+        callbacks: { label: ctx => ` ${ctx.parsed.y.toLocaleString()} listings` }
+      }
+    },
+    scales: {
+      x: {
+        grid: { color: "rgba(99,179,255,0.05)" },
+        ticks: { color: "#3d5a7a", font: { family: "'Space Mono', monospace", size: 11 } }
+      },
+      y: {
+        grid: { color: "rgba(99,179,255,0.05)" },
+        ticks: {
+          color: "#3d5a7a",
+          font: { family: "'Space Mono', monospace", size: 11 },
+          callback: v => (v/1000).toFixed(1)+"k"
+        },
+        min: 6800, max: 7600
+      }
+    }
+  }
+});
+
+new Chart(document.getElementById("wmChart"), {
+  type: "doughnut",
+  data: {
+    labels: ["Hybrid","Onsite","Remote"],
+    datasets: [{
+      data: [16984,16538,16478],
+      backgroundColor: ["rgba(59,158,255,0.8)","rgba(251,191,36,0.8)","rgba(0,229,195,0.8)"],
+      borderColor: "#0d1117",
+      borderWidth: 3,
+      hoverOffset: 4
+    }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    cutout: "70%",
+    plugins: {
+      legend: {
+        position: "bottom",
+        labels: {
+          color: "#7a99bb",
+          font: { family: "'Space Mono', monospace", size: 10 },
+          boxWidth: 10, padding: 12
+        }
+      },
+      tooltip: {
+        backgroundColor: "#0d1117",
+        borderColor: "rgba(59,158,255,0.3)",
+        borderWidth: 1,
+        titleColor: "#7a99bb",
+        bodyColor: "#e2eaf5",
+        titleFont: { family: "'Space Mono', monospace", size: 11 },
+        bodyFont: { family: "'Space Mono', monospace", size: 12 },
+        callbacks: { label: ctx => ` ${ctx.parsed.toLocaleString()} jobs (${(ctx.parsed/50000*100).toFixed(1)}%)` }
+      }
+    }
+  }
+});
+
+new Chart(document.getElementById("expChart"), {
+  type: "bar",
+  data: {
+    labels: ["Entry","Mid","Senior"],
+    datasets: [{
+      data: [16628,16695,16677],
+      backgroundColor: ["rgba(59,158,255,0.7)","rgba(167,139,250,0.7)","rgba(0,229,195,0.7)"],
+      borderColor: ["#3b9eff","#a78bfa","#00e5c3"],
+      borderWidth: 1,
+      borderRadius: 4,
+    }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        backgroundColor: "#0d1117",
+        borderColor: "rgba(59,158,255,0.3)",
+        borderWidth: 1,
+        titleColor: "#7a99bb",
+        bodyColor: "#e2eaf5",
+        titleFont: { family: "'Space Mono', monospace", size: 11 },
+        bodyFont: { family: "'Space Mono', monospace", size: 12 },
+        callbacks: { label: ctx => ` ${ctx.parsed.y.toLocaleString()} listings` }
+      }
+    },
+    scales: {
+      x: {
+        grid: { display: false },
+        ticks: { color: "#3d5a7a", font: { family: "'Space Mono', monospace", size: 11 } }
+      },
+      y: {
+        grid: { color: "rgba(99,179,255,0.05)" },
+        ticks: {
+          color: "#3d5a7a",
+          font: { family: "'Space Mono', monospace", size: 10 },
+          callback: v => (v/1000).toFixed(0)+"k"
+        },
+        min: 16400
+      }
+    }
+  }
+});
+</script>
+</body>
+</html>
