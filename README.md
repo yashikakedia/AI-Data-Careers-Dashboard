@@ -57,6 +57,8 @@ The web version is built using HTML, CSS, JavaScript, and Chart.js. It presents 
 
 ![Tableau Dashboard](tableau_dashboard.png)
 
+
+
 ![AI Dashboard](ai_dashboard.png)
 ## Key Insights
 
