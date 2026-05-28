@@ -33,8 +33,7 @@ The web version is built using HTML, CSS, JavaScript, and Chart.js to present th
 
 ## Live Dashboard
 
-Add your GitHub Pages link here after deployment.
-
+https://yashikakedia.github.io/AI-Data-Careers-Dashboard/
 ## Tableau Dashboard
 
 https://public.tableau.com/views/AIDataCareersMarketOverviewDashboard/MarketOverview?:language=en-US&publish=yes&:sid=&:redirect=auth&:display_count=n&:origin=viz_share_link
