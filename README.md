@@ -38,7 +38,6 @@ Add your GitHub Pages link here after deployment.
 ## Tableau Dashboard
 
 https://public.tableau.com/views/AIDataCareersMarketOverviewDashboard/MarketOverview?:language=en-US&publish=yes&:sid=&:redirect=auth&:display_count=n&:origin=viz_share_link
-
 ## Author
 
 Yashika Kedia
